@@ -1,0 +1,19 @@
+.settings-tabs {
+  a.nav-tab {
+    display: inline-block;
+    border-bottom: none;
+    bottom: -1px;
+    position: relative;
+    list-style: none;
+    padding: 10px 15px;
+    color: #405068;
+    cursor: pointer;
+    font-size: 15px;
+    text-decoration: none;
+    outline: none;
+    &.nav-tab-active {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+}

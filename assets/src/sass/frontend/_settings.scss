@@ -1,0 +1,45 @@
+.fwp-bsp {
+  .fwp-bsp-shedule-field {
+    padding: 0;
+    margin: auto;
+    border: 1px solid #ddd;
+    transition: all .7s ease;
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+
+    .fwp-bsp-shedule-wrap {
+      padding: 0 10px;
+      
+      .fwp-bsp-shedule {
+        display: flex;
+        flex-wrap: nowrap;
+        width: 100%;
+
+        .fwp-bsp-input-prepend {
+          
+          i.fa {
+            padding: 10px;
+            background: #eee;
+            border-radius: 3px;
+          }
+        }
+        input.ac-input {
+          width: 100%;
+        }
+      }
+    }
+    &.fwp-bsp-visible {
+      opacity: 1;
+      visibility: visible;
+      height: auto;
+      overflow: visible;
+      padding: 1rem 0;
+      margin: 10px auto;
+    }
+  }
+  &.bp-nouveau .activity-update-form .rtmedia-plupload-container {
+    float: unset;
+  }
+}
