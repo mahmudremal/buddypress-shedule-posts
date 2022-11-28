@@ -37,3 +37,7 @@ webpack.config.js
 assets/build
 wp-scheduled-posts.4.2.0
 buddypress
+buddypress-newsfeed
+buddypress-polls
+cbxwpbookmark
+cbxwpbookmarkaddon1

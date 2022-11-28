@@ -13,6 +13,7 @@ class PROJECT {
 	use Singleton;
 
 	protected function __construct() {
+		if( ! is_FwpActive( 'fwp_bsp_enabled' ) ) {return;}
 		$this->setup_hooks();
     // Load class.
 		Assets::get_instance();
@@ -25,8 +26,6 @@ class PROJECT {
     // Update::get_instance();
 	}
 	protected function setup_hooks() {
-		// add_action( 'plugins_loaded', [ $this, 'installHook' ], 10, 0 );
-		// $this->installHook();
 		add_action( 'init', [ $this, 'loadTextdomain' ], 1, 0 ); // plugins_loaded
 		add_action( 'body_class', [ $this, 'body_class' ], 1, 1 ); // plugins_loaded
   }
@@ -53,12 +52,7 @@ class PROJECT {
 	}
 	public function unInstall() {
 		global $wpdb;
-		$tables = [
-      'fwp_job_favourite'   => "DROP TABLE IF EXISTS {$wpdb->prefix}fwp_job_favourite;",
-      'fwp_job_cv'          => "DROP TABLE IF EXISTS {$wpdb->prefix}fwp_job_cv;",
-      'fwp_job_application' => "DROP TABLE IF EXISTS {$wpdb->prefix}fwp_job_application;",
-      'fwp_job_payment'		 => "DROP TABLE IF EXISTS {$wpdb->prefix}fwp_job_payment;",
-		];
+		$tables = [];
 
 		foreach( $tables as $i => $sql ) {
 			// $form_db = $wpdb->prefix . $i;
@@ -75,7 +69,7 @@ class PROJECT {
 			}
 		}
 		// flush_rewrite_rules();
-		delete_option( 'advanced-job-openings' );
+		delete_option( 'buddypress-schedule-posts' );
 	}
 	public function loadTextdomain() {
 		load_plugin_textdomain( FUTUREWORDPRESS_PROJECT_TEXT_DOMAIN, false, dirname( plugin_basename( FUTUREWORDPRESS_PROJECT__FILE__ ) ) . '/languages' );

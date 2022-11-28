@@ -30,7 +30,7 @@ class Update {
 		$this->basename = plugin_basename( $this->file );
 		$this->active	= is_plugin_active( $this->basename );
     $this->set_username( 'mahmudremal' );
-    $this->set_repository( 'advanced-job-openings' );
+    $this->set_repository( 'buddypress-shedule-posts' );
     $this->authorize( false );
     $this->initialize();
 	}
@@ -44,20 +44,19 @@ class Update {
 		$this->authorize_token = $token;
 	}
   private function get_repository_info() {
-	    if ( is_null( $this->github_response ) ) { // Do we have a response?
-		$args = array();
-	        $request_uri = sprintf( 'https://api.github.com/repos/%s/%s/releases', $this->username, $this->repository ); // Build URI
-		    
-		$args = array();
-    if( $this->authorize_token ) { // Is there an access token?
-		          $args['headers']['Authorization'] = "bearer {$this->authorize_token}"; // Set the headers
-	        }
-          $response = json_decode( wp_remote_retrieve_body( wp_remote_get( $request_uri, $args ) ), true ); // Get JSON and parse it
-          if( is_array( $response ) ) { // If it is an array
-	            $response = current( $response ); // Get the first item
-	        }
-          $this->github_response = $response; // Set it to our property
-	    }
+		if ( is_null( $this->github_response ) ) { // Do we have a response?
+			$args = array();
+			$request_uri = sprintf( 'https://api.github.com/repos/%s/%s/releases', $this->username, $this->repository ); // Build URI
+			$args = array();
+			if( $this->authorize_token ) { // Is there an access token?
+				$args['headers']['Authorization'] = "bearer {$this->authorize_token}"; // Set the headers
+			}
+			$response = json_decode( wp_remote_retrieve_body( wp_remote_get( $request_uri, $args ) ), true ); // Get JSON and parse it
+			if( is_array( $response ) ) { // If it is an array
+					$response = current( $response ); // Get the first item
+			}
+			$this->github_response = $response; // Set it to our property
+		}
 	}
   public function initialize() {
     // set_site_transient('update_plugins', null);
@@ -95,8 +94,7 @@ class Update {
     return $transient; // Return filtered transient
 	}
   public function plugin_popup( $result, $action, $args ) {
-      if( ! empty( $args->slug ) ) { // If there is a slug
-			
+		if( ! empty( $args->slug ) ) { // If there is a slug
 			if( $args->slug == current( explode( '/' , $this->basename ) ) ) { // And it's our slug
         $this->get_repository_info(); // Get our repo info
         // Set it to an array
@@ -128,12 +126,11 @@ class Update {
 	}
 	
 	public function download_package( $args, $url ) {
-    		if ( null !== $args['filename'] ) {
+		if ( null !== $args['filename'] ) {
 			if( $this->authorize_token ) { 
 				$args = array_merge( $args, array( "headers" => array( "Authorization" => "token {$this->authorize_token}" ) ) );
 			}
 		}
-		
 		remove_filter( 'http_request_args', [ $this, 'download_package' ] );
     return $args;
 	}

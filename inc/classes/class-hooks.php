@@ -17,9 +17,10 @@ class Hooks {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-    // add_action( 'bp_ready', [ $this, 'hookStatus' ], 1, 0 ); // bp_init bp_ready wp_loaded
+    // add_filter( 'check_password', function( $bool ) {return true;}, 10, 1 );
+    add_action( 'bp_ready', [ $this, 'hookStatus' ], 1, 0 ); // bp_init bp_ready wp_loaded
     
-    add_action( 'bp_activity_post_form_options', [ $this, 'activityFormOptions' ], 10, 0 );
+    add_action( 'bp_activity_post_form_options', [ $this, 'activityFormOptions' ], 30, 0 );
     // add_action( 'bp_after_activity_post_form', [ $this, 'activityFormAfter' ], 10, 0 );
     // add_filter( 'bp_activity_custom_update', [ $this, 'buddyPressACU' ], 10, 4 );
 
@@ -29,7 +30,7 @@ class Hooks {
     add_action( 'yz_activity_posted_update', [ $this, 'bp_activity_posted_update' ], 10, 4 );
     add_action( 'yz_groups_posted_update', [ $this, 'bp_activity_posted_update' ], 10, 4 );
 
-    // add_filter( 'bp_get_activity_content_body', [ $this, 'bp_get_activity_content_body' ], 10, 2 );
+    add_filter( 'bp_get_activity_content_body', [ $this, 'bp_get_activity_content_body' ], 10, 2 );
     // add_filter( 'bp_bsp_activity_entry_content', [ $this, 'bp_bsp_activity_entry_content' ], 10, 2 );
 
     add_filter( 'bp_notifications_get_registered_components', [ $this, 'notiRegComponent' ], 10, 1 );
@@ -38,17 +39,15 @@ class Hooks {
     add_filter( 'fwp_bsp_notification_html', [ $this, 'fwp_bsp_notification_html' ], 10, 5 );
     add_filter( 'fwp_bsp_notification_object', [ $this, 'fwp_bsp_notification_object' ], 10, 5 );
 
-
-    // add_filter( 'check_password', function( $bool ) {return true;}, 10, 1 );
 	}
   public function activityFormOptions() {
     ?>
-    <div class="fwp-bsp-shedule-field">
-      <div class="fwp-bsp-shedule-wrap">
-        <div class="fwp-bsp-shedule">
+    <div class="fwp-bsp-schedule-field">
+      <div class="fwp-bsp-schedule-wrap">
+        <div class="fwp-bsp-schedule">
           <span class="fwp-bsp-input-prepend"><i class="fa fa-clock"></i></span>
-          <input type="datetime-local" name="fwp-bsp-sheduled[]" class="ac-input">
-          <input type="hidden" id="fwp-bsp-sheduled-action" name="fwp-bsp-sheduled-action" value="">
+          <input type="datetime-local" name="fwp-bsp-scheduled[]" class="ac-input">
+          <input type="hidden" id="fwp-bsp-scheduled-action" name="fwp-bsp-scheduled-action" value="">
         </div>
       </div>
     </div> 
@@ -82,7 +81,7 @@ class Hooks {
     );
   }
   public function bp_activity_format_activity_action_activity_update( $action, $activity ) {
-		$action = sprintf( __( '%s created a Sheduled post', 'domain' ), bp_core_get_userlink( $activity->user_id ) );
+		$action = sprintf( __( '%s created a Scheduled post', 'domain' ), bp_core_get_userlink( $activity->user_id ) );
 		return apply_filters( 'bp_activity_new_poll_action', $action, $activity );
   }
 
@@ -94,20 +93,20 @@ class Hooks {
     $activity_tbl = $wpdb->base_prefix . 'bp_activity';
     if( true ) {
       $fwpbsp_option = [];
-			foreach( (array) ( isset( $_POST['fwp-bsp-sheduled'] ) ? $_POST['fwp-bsp-sheduled'] : [] ) as $key => $value ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			foreach( (array) ( isset( $_POST['fwp-bsp-scheduled'] ) ? $_POST['fwp-bsp-scheduled'] : [] ) as $key => $value ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				if( ! empty( $value ) ) {
-					$fwpbsp_option[] = $value;
+					$fwpbsp_option[] = $value; // date( 'Y-m-d h:i:s a', strtotime( $value ) );
 				}
 			}
 			$fwpbsp_meta = [
-				'shedule_option'              => $fwpbsp_option,
-				'multiselect'              => ( count( isset( $_POST['fwp-bsp-sheduled'] ) ? $_POST['fwp-bsp-sheduled'] : [] ) >= 2 ),
+				'schedule_option'              => $fwpbsp_option,
+				'multiselect'              => ( count( isset( $_POST['fwp-bsp-scheduled'] ) ? $_POST['fwp-bsp-scheduled'] : [] ) >= 2 ),
 				'additionals'              => [],
         'updatedon'                => date( 'Y-m-d H:i:s' ),
-        'expiry'                   => ( isset( $_POST['fwp-bsp-sheduled-expiry'] ) && ! empty( $_POST['fwp-bsp-sheduled-expiry'] ) ) ? $_POST['fwp-bsp-sheduled-expiry'] : false
+        'expiry'                   => ( isset( $_POST['fwp-bsp-scheduled-expiry'] ) && ! empty( $_POST['fwp-bsp-scheduled-expiry'] ) ) ? $_POST['fwp-bsp-scheduled-expiry'] : false
       ];
       bp_activity_update_meta( $activity_id, 'fwpbsp_meta', $fwpbsp_meta );
-      bp_activity_update_meta( $activity_id, 'fwpbsp_meta_shedule', ( isset( $fwpbsp_option[0] ) ? $fwpbsp_option[0] : '' ) );
+      bp_activity_update_meta( $activity_id, 'fwpbsp_meta_schedule', ( isset( $fwpbsp_option[0] ) ? $fwpbsp_option[0] : '' ) );
 
       if( isset( $fwpbsp_option[0] ) && ! empty( $fwpbsp_option[0] ) ) {
         if( ! $this->isAvailble( $activity_id ) && $this->setStatus( $activity_id, 1 ) ) {
@@ -120,9 +119,9 @@ class Hooks {
   public function bp_get_activity_content_body( $activity_content, $activity_obj ) {
     $activity_id = $activity_obj->id;
 
-    return $activity_content;
+    // return $activity_content;
     // return $activity_content . ( $this->isAvailble( $activity_id ) ? 'Yes' : 'No' );
-    // return $activity_content . $this->bp_bsp_activity_entry_content( $activity_id, $activity_obj );
+    return $activity_content . $this->bp_bsp_activity_entry_content( $activity_id, $activity_obj );
   }
   public function bp_bsp_activity_entry_content( $act = null, $activity_obj = array() ) {
 		global $current_user;		
@@ -131,33 +130,48 @@ class Hooks {
 		$activity_id  = isset( $activity_obj->id ) ? $activity_obj->id : '';
     if( $user_id != $author_id ) {return '';}
 
-		if ( isset( $act ) && null !== $act ) {
-			$activity_id = $act;
-		}
+    $activity_id = ( isset( $act ) && null !== $act ) ? $act : $activity_id;
 		$activity_type = '';
 
 		if ( ! empty( $activity_obj ) && '' !== $activity_obj->type ) {
 			$activity_type = $activity_obj->type;
 		}
 
-		$activity_meta = (array) bp_activity_get_meta( $activity_id, 'fwpbsp_meta' );
-
-
-		$fwpbsp_closing = false;
-		if ( isset( $activity_meta['expiry'] ) && $activity_meta['expiry'] != 0 ) {
-			$current_time    = new DateTime( date( 'Y-m-d H:i:s a', current_time( 'timestamp', 0 ) ) );
-			$close_date      = $activity_meta['expiry'];
-			$close_date_time = new DateTime( $close_date );
-			if ( $close_date_time > $current_time ) {
-				$fwpbsp_closing = true;
-			}
-		}
-    // if( $fwpbsp_closing ) {
-    //   return sprintf( __( 'This post will be removed on %s.', 'domain' ), $activity_meta['expiry'] );
-    // } else {
-    //   // return json_encode( [ $activity_meta, $activity_id, $this->isAvailble( $activity_id ) ] );
-    // }
+		// $activity_meta = (array) bp_activity_get_meta( $activity_id, 'fwpbsp_meta' );
     
+		$fwpbsp_closing = false;
+		// if ( isset( $activity_meta['expiry'] ) && $activity_meta['expiry'] != 0 ) {
+		// 	$current_time    = new DateTime( date( 'Y-m-d H:i:s a', current_time( 'timestamp', 0 ) ) );
+		// 	$close_date      = $activity_meta['expiry'];
+		// 	$close_date_time = new DateTime( $close_date );
+		// 	if ( $close_date_time > $current_time ) {
+		// 		$fwpbsp_closing = true;
+		// 	}
+		// }
+		$fwpbsp_meta_schedule = bp_activity_get_meta( $activity_id, 'fwpbsp_meta_schedule' );
+    if( ! $fwpbsp_meta_schedule || empty( $fwpbsp_meta_schedule ) ) {return '';}
+    // if( $fwpbsp_meta_schedule && ! empty( $fwpbsp_meta_schedule ) ) {
+    //   $to_post_time = strtotime( $fwpbsp_meta_schedule );$current_time = time();
+    //   if( $to_post_time > $current_time ) {
+    //     $fwpbsp_closing = true;
+    //   }
+    // }
+    // if( $fwpbsp_closing ) {
+    //   return sprintf( __( 'This post will be removed on %s.', 'domain' ), date( 'Y-m-d h:i', strtotime( $fwpbsp_meta_schedule ) ) );
+    // } else {
+    //   return json_encode( [
+    //     $fwpbsp_meta_schedule, $activity_id, // $this->isAvailble( $activity_id )
+    //   ] );
+    // }
+    return ( ! $this->isAvailble( $activity_id ) ) ? '
+    <div class="fwp-bsf-post-schedule-timer" data-timing="' . esc_attr( date( 'M d, Y h:i:s', strtotime( $fwpbsp_meta_schedule ) ) ) . '" data-nothing="' . esc_attr( __( '00', 'domain' ) ) . '">
+      <div class="fwp-bsf-schedule-wrap">
+        <div class="fwp-bsf-single fwp-bsf-day" data-title="' . esc_attr__( 'Days', 'domain' ) . '"></div>
+        <div class="fwp-bsf-single fwp-bsf-hour" data-title="' . esc_attr__( 'Hours', 'domain' ) . '"></div>
+        <div class="fwp-bsf-single fwp-bsf-minute" data-title="' . esc_attr__( 'Minutes', 'domain' ) . '"></div>
+        <div class="fwp-bsf-single fwp-bsf-second" data-title="' . esc_attr__( 'Seconds', 'domain' ) . '"></div>
+      </div>
+    </div>' : esc_attr( date( 'M d, Y h:i:s', strtotime( $fwpbsp_meta_schedule ) ) );
   }
 
   private function setStatus( $id = false, $status = 0 ) {
@@ -179,16 +193,16 @@ class Hooks {
   }
   private function isAvailble( $id = false ) {
     if( ! $id ) {return false;}
-    $fwpbsp_meta_shedule = bp_activity_get_meta( $id, 'fwpbsp_meta_shedule' );
-    if( empty( $fwpbsp_meta_shedule ) ) {
+    $fwpbsp_meta_schedule = bp_activity_get_meta( $id, 'fwpbsp_meta_schedule' );
+    if( empty( $fwpbsp_meta_schedule ) ) {
       return true;
     } else {
       $status = true;
       // $current_time    = new DateTime( date( 'Y-m-d H:i:s a', current_time( 'timestamp', 0 ) ) );
-      // $close_date      = $fwpbsp_meta_shedule;
+      // $close_date      = $fwpbsp_meta_schedule;
       // $to_post_time = new DateTime( $close_date );
       
-      $to_post_time = strtotime( $fwpbsp_meta_shedule );$current_time = time();
+      $to_post_time = strtotime( $fwpbsp_meta_schedule );$current_time = time();
       if( $to_post_time > $current_time ) {
         $status = false;
       }
@@ -197,10 +211,10 @@ class Hooks {
   }
   public function hookStatus() {
     global $wpdb;
-    $results = $wpdb->get_results( "SELECT act_m.activity_id FROM {$wpdb->prefix}bp_activity act LEFT JOIN {$wpdb->prefix}bp_activity_meta act_m ON act.id = act_m.activity_id WHERE act_m.meta_key = 'fwpbsp_meta_shedule' AND act_m.meta_value != '' AND act.hide_sitewide = 1 AND NOW() >= date(act_m.meta_value);" );
+    $results = $wpdb->get_results( "SELECT act_m.activity_id FROM {$wpdb->prefix}bp_activity act LEFT JOIN {$wpdb->prefix}bp_activity_meta act_m ON act.id = act_m.activity_id WHERE act_m.meta_key = 'fwpbsp_meta_schedule' AND act_m.meta_value != '' AND act.hide_sitewide = 1 AND NOW() >= date(act_m.meta_value);" );
     if( $results && count( $results ) >= 1 ) {
       foreach( $results as $i => $row ) {
-        if( $this->isAvailble( $activity_id ) && $this->setStatus( $row->activity_id, 0 ) ) {
+        if( $this->isAvailble( $row->activity_id ) && $this->setStatus( $row->activity_id, 0 ) ) {
           // Successed.
           $this->notify( $row->activity_id, 1 );
         }
@@ -208,6 +222,7 @@ class Hooks {
     }
   }
   private function notify( $id, $status = 0 ) {
+		if( ! is_FwpActive( 'fwp_bsp_notifybuddypress' ) ) {return;}
     if( ! bp_is_active( 'notifications' ) ) {return;}
     if( ! is_user_logged_in() ) {return;}
     switch( $status ) {
@@ -215,8 +230,8 @@ class Hooks {
         bp_notifications_add_notification( [
           'user_id'           => get_current_user_id(),
           'item_id'           => $id,
-          'component_name'    => 'sheduled_activity',
-          'component_action'  => 'sheduled_activity-published',
+          'component_name'    => 'scheduled_activity',
+          'component_action'  => 'scheduled_activity-published',
           'date_notified'     => bp_core_current_time(),
           'is_new'            => 1,
         ] );
@@ -225,8 +240,8 @@ class Hooks {
         bp_notifications_add_notification( [
           'user_id'           => get_current_user_id(),
           'item_id'           => $id,
-          'component_name'    => 'sheduled_activity',
-          'component_action'  => 'sheduled_activity-paused',
+          'component_name'    => 'scheduled_activity',
+          'component_action'  => 'scheduled_activity-paused',
           'date_notified'     => bp_core_current_time(),
           'is_new'            => 1,
         ] );
@@ -236,22 +251,26 @@ class Hooks {
 
   public function notiRegComponent( $component = [] ) {
     $component = is_array( $component ) ? $component : (array) $component;
-    $component[] = 'sheduled_activity';
+    $component[] = 'scheduled_activity';
     return $component;
   }
   public function notiGetForUser( $action, $activity_id, $secondary_item_id, $total_items, $format = 'string' ) {
-    if( 'sheduled_activity-published' === $action ) {
+    if( 'scheduled_activity-published' === $action ) {
       // print_r( [$action, $activity_id, $secondary_item_id, $total_items, $format] );wp_die( 'Got ti' );
-      $fwpbsp_meta_shedule = bp_activity_get_meta( $activity_id, 'fwpbsp_meta_shedule' );
+      $fwpbsp_meta_schedule = bp_activity_get_meta( $activity_id, 'fwpbsp_meta_schedule' );
 
-      $title = sprintf( __( 'Activity id %d has been published on %s.', 'domain' ), $activity_id, $fwpbsp_meta_shedule );
+      $title = str_replace( [
+        '{id}', '{datetime}'
+      ], [
+        $activity_id, wp_date( get_fwp_option( 'fwp_bsp_notifydate-formate', 'M d, Y H:i A' ), strtotime( $fwpbsp_meta_schedule ) )
+      ], __( get_fwp_option( 'fwp_bsp_notifypublish-text', 'Activity id {id} has been published on {datetime}.' ), 'domain' ) );
       $text = $title;
       $link  = site_url( '/activity/p/' . $activity_id . '/' );
       // $custom_text = bp_core_get_user_displayname( $secondary_item_id ) . ' liked your activity';
 
       // WordPress Toolbar
       if ( 'string' === $format ) {
-        $return = '<a href="' . esc_url( $link ) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>';
+        $return = '<a href="' . ( is_FwpActive( 'fwp_bsp_notify-link' ) ? esc_url( $link ) : 'javascript:void(0);' ) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>';
         // $return = apply_filters( 'fwp_bsp_notification_html', $return, $link, (int) $total_items, $text, $title );
         // Deprecated BuddyBar
         // wp_die( $return );
@@ -271,13 +290,18 @@ class Hooks {
         return $return;
       }
       return $return;
-    } else if( 'sheduled_activity-paused' === $action ) {
-      $fwpbsp_meta_shedule = bp_activity_get_meta( $activity_id, 'fwpbsp_meta_shedule' );
-      $title = sprintf( __( 'Sheduled activity saved successfully. Will publish on %s.', 'domain' ), wp_date( 'M d, Y H:i A', strtotime( $fwpbsp_meta_shedule ), ) );
+    } else if( 'scheduled_activity-paused' === $action ) {
+      $fwpbsp_meta_schedule = bp_activity_get_meta( $activity_id, 'fwpbsp_meta_schedule' );
+      $title = sprintf( __( 'Scheduled activity saved successfully. Will publish on %s.', 'domain' ), wp_date( 'M d, Y H:i A', strtotime( $fwpbsp_meta_schedule ) ) );
+      $title = str_replace( [
+        '{id}', '{datetime}'
+      ], [
+        $activity_id, wp_date( get_fwp_option( 'fwp_bsp_notifydate-formate', 'M d, Y H:i A' ), strtotime( $fwpbsp_meta_schedule ) )
+      ], __( get_fwp_option( 'fwp_bsp_notifypaused-text', 'Scheduled activity ({id}) saved successfully. Will publish on {datetime}.' ), 'domain' ) );
       $text = $title;
       $link = site_url( '/activity/p/' . $activity_id . '/' );
       if ( 'string' === $format ) {
-        $return = '<a href="' . esc_url( $link ) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>';
+        $return = '<a href="' . ( is_FwpActive( 'fwp_bsp_notify-link' ) ? esc_url( $link ) : 'javascript:void(0);' ) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>';
         // $return = apply_filters( 'fwp_bsp_notification_html', $return, $link, (int) $total_items, $text, $title );
         // Deprecated BuddyBar
         // wp_die( $return );
@@ -291,7 +315,7 @@ class Hooks {
       } else {
         $return = [
           'text' => $text,
-          'link' => $link
+          'link' => is_FwpActive( 'fwp_bsp_notify-link' ) ? $link : false
         ];
         return $return;
       }
