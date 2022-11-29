@@ -139,14 +139,15 @@
           flex-wrap: wrap;
           justify-content: space-around;
           > a {
-            color: #fff;
+            // color: #fff;
+            color: currentColor;
             > span {
               display: none;
             }
             > i {
               display: block;
               &:hover {
-                color: #ddd;
+                color: #ccc;
                 + span {
                   display: block;
                   position: absolute;

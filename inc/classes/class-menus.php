@@ -64,6 +64,13 @@ class Menus {
 				// 	'type'			=> 'checkbox',
 				// 	'default'		=> false
 				// ],
+				[
+					'id' 			=> 'fwp_bsp_ondragconfirm',
+					'label'			=> __( 'Confirm on Drag', FUTUREWORDPRESS_PROJECT_TEXT_DOMAIN ),
+					'description'	=> __( 'By enabling this option, users have to confirm on schedule date switching. If you disable this option, then users doesn\'t need any confirmation to do.', FUTUREWORDPRESS_PROJECT_TEXT_DOMAIN ),
+					'type'			=> 'checkbox',
+					'default'		=> true
+				],
 			]
 		];
 		$args['notify'] = [

@@ -83,12 +83,14 @@ class Assets {
 
 		// get_fwp_option( 'candidate_cv_delete_confirm_txt', 'Are you sure you want to delete Your CV? This can\'t be undo.' ),
 		wp_localize_script( 'fwp-bsp-frontend', 'siteConfig', [
-			'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
-			'ajax_nonce' => wp_create_nonce( 'fwp_bsp_ajax_post_nonce' ),
-      'iScheduled' => is_FwpActive( 'fwp_bsp_enabled' ),
-      'defaulTime' => get_fwp_option( 'fwp_bsp_defaultime', '12:00:00 AM' ),
-      'hideSubmit' => is_FwpActive( 'fwp_bsp_hidepostnow' ),
-      'confirmDelete' => __( 'Are you sure you want ot delete this activity post? Please click cancel to dismiss this request.', 'domain' ),
+			'ajaxUrl'						=> admin_url( 'admin-ajax.php' ),
+			'ajax_nonce'				=> wp_create_nonce( 'fwp_bsp_ajax_post_nonce' ),
+      'iScheduled'				=> is_FwpActive( 'fwp_bsp_enabled' ),
+      'defaulTime'				=> get_fwp_option( 'fwp_bsp_defaultime', '12:00:00 AM' ),
+      'hideSubmit'				=> is_FwpActive( 'fwp_bsp_hidepostnow' ),
+      'confirmDelete'			=> __( 'Are you sure you want ot delete this activity post? Please click cancel to dismiss this request.', 'domain' ),
+			'onDragConfirm'			=> is_FwpActive( 'fwp_bsp_ondragconfirm' ),
+			'confirmSwitch'			=> __( 'Are you sure about this change? Click on Cancel to dismiss.', 'domain' )
 		] );
 	}
 	public function register_admin_styles() {

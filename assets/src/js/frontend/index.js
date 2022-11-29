@@ -13,7 +13,9 @@
 			this.iScheduled = siteConfig?.iScheduled ?? false;
 			this.defaulTime = siteConfig?.defaulTime ?? '12:00:00 AM';
 			this.hideSubmit = siteConfig?.hideSubmit ?? false;
+			this.onDragConfirm = siteConfig?.onDragConfirm ?? false;
 			this.confirmDelete = siteConfig?.confirmDelete ?? 'Click okay to make sure you want to delete it.';
+			this.confirmSwitch = siteConfig?.confirmSwitch ?? "Are you sure about this change?\nClick on Cancel to dismiss.";
 			this.calendar = null;
       
 			this.init();
@@ -33,6 +35,7 @@
 					thisClass.managePopup();
 				}, 1000 );
 				thisClass.ajaxLoad();
+				thisClass.fixCustomTabIssue();
 			}
     }
 		scheduleButton() {
@@ -156,7 +159,7 @@
 						// eventRender: function( event, element ) {
 						// 	// element.find(".fc-title").append('<strong>bla bla bla</strong>');
 						// },
-						eventContent: function(arg) {
+						eventContent: function( arg ) {
 							let divEl = document.createElement( 'div' );var node, dom, div, elem, span, a, i, img;
 							// console.log( arg );
 							if( arg.event._def.extendedProps.isHTML && arg.event._def.extendedProps.html ) {
@@ -166,6 +169,10 @@
 							}
 							let arrayOfDomNodes = [ divEl ];
 							return { domNodes: arrayOfDomNodes };
+						},
+						editable: true,
+						eventDrop: function( info ) {
+							thisClass.eventDrop( info );
 						}
 					} );
 					thisClass.calendar.render();
@@ -307,6 +314,45 @@
 				dom.addEventListener( 'click', function( event ) {
 					thisClass.closePopup( popup );
 				} );
+			}
+		}
+		fixCustomTabIssue() {
+			const thisClass = this;var node = document.querySelector( 'body.fwp-bsp.buddypress .entry-content' );
+			if( ! document.querySelector( 'body.fwp-bsp.buddypress #buddypress' ) && node ) {
+				node.id = 'buddypress';node.classList.add( 'buddypress-wrap', 'reign-theme', 'bp-single-vert-nav', 'bp-vertical-navs', 'bp-dir-hori-nav' );
+			}
+		}
+		eventDrop( info ) {
+			const thisClass = this;
+			// alert( info.event.title + " was dropped on " + info.event.start.toISOString() );
+			// alert( info.event.id + " was dropped on " + info.event.start.toISOString() );
+			// console.log( info.event.id, info.event.start );
+			if( ! thisClass.onDragConfirm || confirm( thisClass.confirmSwitch ) ) {
+				$.ajax( {
+					url: thisClass.ajaxUrl,
+					type: 'POST',
+					dataType: 'json',
+					data: {
+						action: 'fwp-bsp-activity-switch-schedule',
+						nonce: thisClass.ajaxNonce,
+						schedule: info.event.start.toISOString(),
+						activity: info.event.id
+					},
+					success: function( json ) {
+						var events = [];
+						if( json.success ) {
+							console.log( json.data );
+						} else {
+							info.revert();
+						}
+					},
+					error: function( e ) {
+						console.log( e );
+						info.revert();
+					}
+				} );
+			} else {
+				info.revert();
 			}
 		}
 	}

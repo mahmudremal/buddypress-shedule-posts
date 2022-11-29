@@ -38,6 +38,9 @@ class Dashboard {
 
     add_action( 'admin_post_fwp-bsp-activity-re-edit', [ $this, 'updateActivity' ], 10, 0 );
     // add_action( 'admin_post_nopriv_fwp-bsp-activity-re-edit', [ $this, 'updateActivity' ], 10, 0 );
+
+    add_action( 'wp_ajax_fwp-bsp-activity-switch-schedule', [ $this, 'switchSchedule' ], 10, 0 );
+    // add_action( 'wp_ajax_nopriv_fwp-bsp-activity-switch-schedule', [ $this, 'switchSchedule' ], 10, 0 );
 	}
   private function allowAllProfile() {
     return true;
@@ -305,9 +308,9 @@ class Dashboard {
         $scheduled_on = empty( $scheduled_on ) ? bp_get_activity_date_recorded() : $scheduled_on;
         // locate_template( array( 'activity/entry.php' ), true, false );
         $args[] = [
-          // id: bp_get_activity_id(),
+          'id'            => bp_get_activity_id(),
           // 'title'         => bp_get_the_title,
-          'start'         => '2022-11-10',
+          'start'         => date( 'Y-m-d h:i', strtotime( $scheduled_on ) ),
           'extendedProps' => [
             'isHTML'      => true,
             // url: 'http://google.com/',
@@ -366,6 +369,8 @@ class Dashboard {
         //   'show_hidden'   => true
         // ] );
         if( true || ( $has_activity && isset( $has_activity[ 'activities' ] ) && isset( $has_activity[ 'activities' ][0] ) ) ) {
+          $prfx = '<!-- Bypass embed -->';
+          $request[ 'content' ] = $prfx . $request[ 'content' ] . $prfx;
           // $activity_id = bp_activity_add( [
           //   'id'              => $request[ 'id' ],
           //   'content'         => $request[ 'content' ],
@@ -395,6 +400,29 @@ class Dashboard {
       } else {
         wp_die( __( 'Problem detected in your request. Please fillup all things first.', 'domain' ), __( 'Form validation error.', 'domain' ) );
       }
+    }
+  }
+  public function switchSchedule() {
+    global $wpdb, $bp;
+    // print_r( $bp->activity->table_name );
+    if( ! isset( $_POST[ 'nonce' ] ) || empty( $_POST[ 'nonce' ] ) || ! wp_verify_nonce( $_POST[ 'nonce' ], 'fwp_bsp_ajax_post_nonce' ) ) {
+      wp_send_json_error( __( 'Illigal request detected.', 'domain' ), 500 );
+    } else if( isset( $_POST[ 'activity' ] ) && ! empty( $_POST[ 'activity' ] ) && isset( $_POST[ 'schedule' ] ) && ! empty( $_POST[ 'schedule' ] ) ) {
+      $request      = $_POST[ 'activity' ];
+      $schedule     = date( 'Y-m-d h:i:s a', strtotime( $_POST[ 'schedule' ] ) );
+      $activity_exists = $wpdb->get_row( $wpdb->prepare(
+        "SELECT COUNT(*) FROM {$bp->activity->table_name} WHERE id = %d AND user_id = %d limit 0, 1;",
+        $request, get_current_user_id()
+      ), ARRAY_N );
+      if( $activity_exists ) {
+        bp_activity_update_meta( $request, 'fwpbsp_meta_schedule', $schedule );
+        wp_send_json_success( sprintf( __( 'Scheduled successfully changed to %s.', 'domain' ), $schedule ), 200 );
+      } else {
+        wp_send_json_error( __( 'Something happens while tring to validate this activity and updating it.', 'domain' ), 500 );
+        // wp_send_json_error( json_encode( (array) $activity_exists ), 200 );
+      }
+    } else {
+      wp_send_json_error( __( 'Request not valid or incomplete.', 'domain' ), 500 );
     }
   }
 

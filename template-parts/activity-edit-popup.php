@@ -20,7 +20,7 @@ global $wp;
               <div class="title h6"><?php esc_html_e( 'Edit Activity post', 'domain' ); ?></div>
 
               <!-- <div class="content">
-                <div id="buddypress">
+                <div id="budd ypress">
                   <div>
                     <div class="activity-comment activity-update-form" id="bp-nouveau-activity-form">
                       <?php // locate_template( array( 'buddypress/activity/post-form.php' ), true ); ?>
