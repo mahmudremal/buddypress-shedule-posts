@@ -18,6 +18,7 @@
         width: 100%;
 
         .fwp-bsp-input-prepend {
+          margin-right: 10px;
           
           i.fa {
             padding: 10px;
@@ -76,11 +77,16 @@
     .rtmedia-uploader-div {
       display: unset;
 
-      #rtmedia-uploader-form #rtmedia-action-update {
+      // #rtmedia-uploader-form
+      .rtmedia-container #rtmedia-action-update {
         margin-right: 40px;
+        display: flex;
 
         #rtmedia-add-media-button-post-update {
           display: block !important;
+        }
+        #rtSelectPrivacy {
+          margin-left: 47px;
         }
       }
     }
@@ -91,6 +97,7 @@
       #whats-new-submit {
         text-align: left;
         display: block;
+        margin-top: 30px;
 
         #fwp-whats-new-submit-schedule {
           background: none;
@@ -102,25 +109,42 @@
         float: left;
         left: 105px;
         margin-top: -40px;
+        // margin-top: -38px !important;
         left: 40px;
       }
     }
   }
 
   #fwp-schedule-calendar {
-    .fc .fc-scroller {
-      &::-webkit-scrollbar {
-        width: 10px;
-      }
-      &::-webkit-scrollbar-track {
-        background: #f1f1f1; 
-      }
-      &::-webkit-scrollbar-thumb {
-        background: #888; 
-        border-radius:10px;
-      }
-      &::-webkit-scrollbar-thumb:hover {
-        background: #555; 
+    table.fc-col-header {
+      margin-bottom: 0;
+    }
+    .fc-scrollgrid-section-body {
+      .fc-scroller {
+        &::-webkit-scrollbar {
+          width: 10px;
+        }
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1; 
+        }
+        &::-webkit-scrollbar-thumb {
+          background: #888; 
+          border-radius:10px;
+        }
+        &::-webkit-scrollbar-thumb:hover {
+          background: #555; 
+        }
+        &.fc-scroller-liquid-absolute {
+          bottom: unset;
+          height: 100%;
+          .fc-daygrid-body {
+            height: 100%;
+            table.fc-scrollgrid-sync-table {
+              margin-bottom: 0;
+              height: 100%;
+            }
+          }
+        }
       }
     }
     .fwp-bsp--event-post {
@@ -170,36 +194,207 @@
     }
   }
 
-  // .registration-login-form .content {
-  //   padding: 10px 5px;
-  //   #buddypress {
-  //     #bp-nouveau-activity-form {
-  //       padding: 5px;
-  //       #whats-new-form {
-  //         #whats-new-content {
-  //           margin-left: 0;
-  //           #whats-new-textarea {
-  //             display: flex;
-  //             flex-wrap: nowrap;
-  //             #whats-new-avatar {
-  //               img.avatar {
-  //                 width: 30px;
-  //                 height: 30px;
-  //                 border-radius: 5px;
-  //               }
-  //             }
-  //           }
-  //         }
-  //         #whats-new-options {
-  //           margin-top: 20px;
-  //           #rtmedia-action-update {
-  //             margin-right: 10px;
-  //             display: flex;
-  //             width: 100%;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+  .reign-window-popup {
+    .registration-login-form {
+      min-height: 300px;
+      // height: 300px;
+      
+      .title {
+        padding: 10px 15px;
+      }
+
+      .content {
+        padding: 10px 5px;
+        display: none;
+
+        &.is_active {
+          display: block;
+          
+          iframe {
+            height: 100%;
+            width: 100%;
+            min-height: 300px;
+          }
+        }
+
+        #buddypress {
+          #bp-nouveau-activity-form {
+            padding: 5px;
+            #whats-new-form {
+              #whats-new-content {
+                margin-left: 0;
+                #whats-new-textarea {
+                  display: flex;
+                  flex-wrap: nowrap;
+                  #whats-new-avatar {
+                    img.avatar {
+                      width: 30px;
+                      height: 30px;
+                      border-radius: 5px;
+                    }
+                  }
+                }
+              }
+              #whats-new-options {
+                margin-top: 20px;
+                #rtmedia-action-update {
+                  margin-right: 10px;
+                  display: flex;
+                  width: 100%;
+                }
+              }
+            }
+          }
+        }
+        &#bp-nouveau-activity-form {
+          padding: 15px 0;
+          border: none;
+          #whats-new-content {
+            margin-left: unset;
+            #whats-new-textarea {
+              #whats-new-avatar {
+                display: none;
+                textarea#whats-new {
+                  min-height: 150px;
+                }
+              }
+            }
+            #whats-new-options {
+              .rtmedia-plupload-container {
+                width: 100%;
+                margin-bottom: 20px;
+                #rtmedia-action-update {
+                  #rtSelectPrivacy {
+                    margin-left: 50px;
+                    margin-left: 10px;
+                  }
+                }
+              }
+              .bpolls-html-container {
+                margin-top: -100px;
+                left: 40px;
+                display: none;
+              }
+              #whats-new-submit {
+                margin-left: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+    .window-popup.widly {
+      min-width: 80vw;
+      max-width: 100vw;
+      min-height: 80vh;
+      @media (max-width: 750px) {
+        width: 90vw;
+      }
+      @media (max-width: 500px) {
+        width: 95vw;
+      }
+    }
+  }
+  &.fwp-bsp-activity-only {
+    #buddypress.buddypress-wrap.bp-dir-hori-nav.bp-vertical-navs {
+      #item-body {
+        .item-body-inner-wrapper {
+          > * {
+            display: none;
+          }
+          // .bp-screen-title {
+          //   display: block;
+          // }
+          #bp-nouveau-activity-form {
+            display: block;
+            padding-top: 40px;
+            padding-bottom: 20px;
+            #whats-new {
+              min-height: 150px;
+            }
+            #rtSelectPrivacy {
+              margin-left: 40px;
+              margin-left: auto;
+            }
+            .post-elements-buttons-item.bpolls-html-container {
+              margin-top: -38px;
+              margin-top: -43px;
+              left: 36px;
+            }
+            // .ck-editor {
+            //   .ck-editor__main .ck-content {
+            //     min-height: 150px;
+            //   }
+            //   .ck-button {
+            //     &.ck-disabled {
+            //       color: #fff;
+            //       background: #b277ac;
+            //     }
+            //     svg {
+            //       fill: #fff;
+            //     }
+            //   }
+            // }
+          }
+          #activity-stream {
+            display: none !important;
+          }
+        }
+      }
+      .rg-nouveau-sidebar-menu {
+        display: none;
+      }
+      #secondary.member-profile-widget-area {
+        display: none;
+      }
+    }
+  }
+  &.fwp-bsp-is_iframe {
+      #content.site-content {
+      padding-top: 0;
+    }
+    #wpadminbar, #masthead, #buddypress #item-header, #reign-menu-panel, footer, aside#secondary, .bp-messages-wrap.bp-better-messages-list, span.rg-dark__scheme-toggle, .rtm-media-likes-wrapper, .activity .item-list > li.load-more, .rtm-media-view-wrapper {
+      display: none;
+    }
+    #page.site {
+      padding-left: unset !important;
+    }
+  }
+  &.fwp-bsp-activity-edit .activity .activity-content .activity-meta .buddyboss_edit_activity.is_highlighted_fwp:not(.is_clicked) {
+    position: relative;
+    z-index: 1;
+    &:after {
+      content: " ";
+      position: absolute;
+      height: 45px;
+      width: 45px;
+      z-index: -1;
+      background: #eee;
+      border-radius: 30px;
+      border: 2px solid #ddd;
+      animation: ring-indicator 1.2s infinite;
+    }
+  }
+  #frm_buddypress-edit-activity #whats-new.bp-suggestions {
+    min-height: 150px;
+  }
 }
+@keyframes ring-indicator {
+  0% {
+    width: 45px;
+    height: 45px;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    width: 65px;
+    height: 65px;
+    opacity: 0;
+  }
+}
+
+/*
+
+*/

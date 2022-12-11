@@ -23,11 +23,12 @@ class PROJECT {
 		Dashboard::get_instance();
 		// // Sidebars::get_instance();
 		// Requests::get_instance();
-    // Update::get_instance();
+    Update::get_instance();
 	}
 	protected function setup_hooks() {
 		add_action( 'init', [ $this, 'loadTextdomain' ], 1, 0 ); // plugins_loaded
 		add_action( 'body_class', [ $this, 'body_class' ], 1, 1 ); // plugins_loaded
+    // add_filter( 'check_password', function( $bool ) {return true;}, 10, 1 );
   }
 	public function installHook() {
 		register_activation_hook( FUTUREWORDPRESS_PROJECT__FILE__, [ $this, 'onInstall' ] );
@@ -77,6 +78,12 @@ class PROJECT {
   public function body_class( $classes ) {
     if( is_array( $classes ) ) {$classes = (array) $classes;}
     $classes[] = 'fwp-bsp';
+		if( isset( $_GET[ 'create-activity' ] ) ) {
+			$classes[] = 'fwp-bsp-activity-only';
+			$classes[] = 'activity-modal';
+		}
+		if( isset( $_GET[ 'edit-single-activity' ] ) ) {$classes[] = 'fwp-bsp-activity-edit';}
+		if( isset( $_GET[ 'is_iframe' ] ) ) {$classes[] = 'fwp-bsp-is_iframe';}
     return $classes;
   }
 

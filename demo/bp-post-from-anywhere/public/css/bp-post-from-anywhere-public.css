@@ -1,0 +1,216 @@
+form#bppfa-whats-new-form {
+    position: relative;
+    margin: 0;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px!important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+#bppfa-buddypress form#bppfa-whats-new-form #bppfa-whats-new-avatar {
+    float: left;
+}
+
+#bppfa-buddypress-widget form#wbppfa-whats-new-form #bppfa-whats-new-avatar{
+    text-align: center;
+}
+
+#bppfa-buddypress form#bppfa-whats-new-form p.activity-greeting {
+    line-height: 1.4;
+    margin-bottom: 30px;
+    margin-left: 65px;
+}
+
+#bppfa-buddypress-widget form#wbppfa-whats-new-form p.activity-greeting {
+    line-height: 1.4;
+    text-align: center;
+}
+
+#bppfa-buddypress-widget form#wbppfa-whats-new-form textarea,
+#bppfa-buddypress form#bppfa-whats-new-form textarea {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #fff;
+    background-image: none;
+    background-origin: padding-box;
+    background-position-x: 0;
+    background-position-y: 0;
+    background-repeat: repeat;
+    background-size: auto auto;
+    box-sizing: border-box;
+    color: inherit;
+    font-family: inherit;
+    font-size: medium;
+    width: 100%;
+    height: 60px !important;
+}
+
+#bppfa-buddypress-widget #wbppfa-whats-new-options::after,
+#bppfa-buddypress #bppfa-whats-new-options::after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+#bppfa-buddypress-widget form#wbppfa-whats-new-form #bppfa-whats-new-submit {
+    margin-top: 12px;
+    text-align: center;
+}
+
+#bppfa-buddypress form#bppfa-whats-new-form #bppfa-whats-new-submit {
+    float: right;
+}
+
+div#bppfa-whats-new-options {
+    margin: 5px 0px;
+}
+
+#bppfa-buddypress-widget input[type="submit"],
+#bppfa-buddypress-widget input[type="button"] {
+    background: #fff;
+    border: 1px solid #aea9a9 !important;
+    color: #767676;
+    font-size: small;
+    cursor: pointer;
+    outline: none;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 30px;
+
+}
+
+#bppfa-buddypress input[type="submit"],
+#bppfa-buddypress input[type="button"] {
+    font-size: small;
+    cursor: pointer;
+    outline: none;
+    text-align: center;
+    text-decoration: none;
+}
+
+.bppfa-alert-box,
+.wbppfa-alert-box {
+    color: #555;
+    border-radius: 6px;
+    font-family: Tahoma,Geneva,Arial,sans-serif;
+    padding: 10px 10px 10px 36px;
+    margin: 10px;
+    display: none;
+}
+
+.bppfa-alert-box span,
+.wbppfa-alert-box span {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.bppfa-success {
+    background: #e9ffd9 url('../icons/success.png') no-repeat 10px 50%;
+    border: 1px solid #a6ca8a;
+}
+
+.bppfa-error {
+    background: #ffecec url('../icons/error.png') no-repeat 10px 50%;
+    border: 1px solid #f5aca6;
+}
+
+#bppfa-whats-new-avatar img.avatar{
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    vertical-align: middle;
+}
+
+.bppfa-spinner {
+    background: url('../icons/spinner.gif') no-repeat;
+    background-size: auto auto;
+    background-size: auto auto;
+    background-size: 22px 22px;
+    display: none;
+    float: left;
+    width: 22px;
+    height: 22px;
+    margin: 0px 5px;
+}
+
+.wbppfa-spinner {
+    background: url('../icons/spinner.gif') no-repeat;
+    background-size: auto auto;
+    background-size: auto auto;
+    background-size: auto auto;
+    background-size: 22px 22px;
+    display: none;
+    float: left;
+    width: 22px;
+    height: 22px;
+    position: relative;
+    top: 6px;
+
+}
+
+#bppfa-buddypress div#message p::before {
+    font-family: 'FontAwesome';
+    font-weight: normal;
+    font-style: normal;
+    text-rendering: auto;
+    text-decoration: inherit;
+    display: inline-block;
+    line-height: 1.2em;
+    content: "\f071";
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-decoration: none;
+    margin-right: 10px;
+    padding: 0;
+    vertical-align: middle;
+}
+
+#bppfa-buddypress div#message.error p {
+    background-color: #fcdcdd;
+    color: #f14e56;
+    display: block;
+    padding: 20px 30px;
+    border-radius: 3px;
+}
+
+.notify .notify-text-error p {
+    margin: 5px 0;
+    margin-bottom: 5px;
+    margin-bottom: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 14px;
+    color: #f00;
+}
+
+.notify.notify-center-center {
+    left: auto;
+    right: 5%;
+}
+
+/* BuddyPress Checkin */
+body .bpchk-marker-container {
+    margin-left: 0;
+}
+
+body .bp-checkins.bp-checkin-panel {
+    width: 100%;
+    margin-left: 0;
+}
+
+/* BuddyPress Quote */
+body .quote-btn {
+    margin-left: 0;    
+}
+
+body.bp-nouveau .bpquotes-bg-selection-div {
+    margin: 0;
+}
+
+/* BuddyPress Polls */
+body.bp-nouveau .bpolls-polls-option-html {
+    width: 100%;
+    margin-left: 0;
+}

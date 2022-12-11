@@ -17,7 +17,6 @@ class Hooks {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-    // add_filter( 'check_password', function( $bool ) {return true;}, 10, 1 );
     add_action( 'bp_ready', [ $this, 'hookStatus' ], 1, 0 ); // bp_init bp_ready wp_loaded
     
     add_action( 'bp_activity_post_form_options', [ $this, 'activityFormOptions' ], 30, 0 );
@@ -46,6 +45,7 @@ class Hooks {
       <div class="fwp-bsp-schedule-wrap">
         <div class="fwp-bsp-schedule">
           <span class="fwp-bsp-input-prepend"><i class="fa fa-clock"></i></span>
+          <input type="hidden" name="timezone" class="ac-input" id="fwp-bsp-scheduled-timezone">
           <input type="datetime-local" name="fwp-bsp-scheduled[]" class="ac-input">
           <input type="hidden" id="fwp-bsp-scheduled-action" name="fwp-bsp-scheduled-action" value="">
         </div>
@@ -81,7 +81,7 @@ class Hooks {
     );
   }
   public function bp_activity_format_activity_action_activity_update( $action, $activity ) {
-		$action = sprintf( __( '%s created a Scheduled post', 'domain' ), bp_core_get_userlink( $activity->user_id ) );
+		$action = sprintf( __( '%s created a Scheduled post', 'fwp-bsp' ), bp_core_get_userlink( $activity->user_id ) );
 		return apply_filters( 'bp_activity_new_poll_action', $action, $activity );
   }
 
@@ -95,18 +95,31 @@ class Hooks {
       $fwpbsp_option = [];
 			foreach( (array) ( isset( $_POST['fwp-bsp-scheduled'] ) ? $_POST['fwp-bsp-scheduled'] : [] ) as $key => $value ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				if( ! empty( $value ) ) {
-					$fwpbsp_option[] = $value; // date( 'Y-m-d h:i:s a', strtotime( $value ) );
+					$fwpbsp_option[] = $value; // date( 'Y-m-d H:i:s', strtotime( $value ) );
 				}
 			}
-			$fwpbsp_meta = [
-				'schedule_option'              => $fwpbsp_option,
-				'multiselect'              => ( count( isset( $_POST['fwp-bsp-scheduled'] ) ? $_POST['fwp-bsp-scheduled'] : [] ) >= 2 ),
-				'additionals'              => [],
-        'updatedon'                => date( 'Y-m-d H:i:s' ),
-        'expiry'                   => ( isset( $_POST['fwp-bsp-scheduled-expiry'] ) && ! empty( $_POST['fwp-bsp-scheduled-expiry'] ) ) ? $_POST['fwp-bsp-scheduled-expiry'] : false
-      ];
-      bp_activity_update_meta( $activity_id, 'fwpbsp_meta', $fwpbsp_meta );
-      bp_activity_update_meta( $activity_id, 'fwpbsp_meta_schedule', ( isset( $fwpbsp_option[0] ) ? $fwpbsp_option[0] : '' ) );
+			// $fwpbsp_meta = [
+			// 	'schedule_option'              => $fwpbsp_option,
+			// 	'multiselect'              => ( count( isset( $_POST['fwp-bsp-scheduled'] ) ? $_POST['fwp-bsp-scheduled'] : [] ) >= 2 ),
+			// 	'additionals'              => [],
+      //   'updatedon'                => date( 'Y-m-d H:i:s' ),
+      //   'expiry'                   => ( isset( $_POST['fwp-bsp-scheduled-expiry'] ) && ! empty( $_POST['fwp-bsp-scheduled-expiry'] ) ) ? $_POST['fwp-bsp-scheduled-expiry'] : false
+      // ];
+      // bp_activity_update_meta( $activity_id, 'fwpbsp_meta', $fwpbsp_meta );
+      // bp_activity_update_meta( $activity_id, 'fwpbsp_meta_schedule', ( isset( $fwpbsp_option[0] ) ? date( 'Y-m-d H:i:s', strtotime( $fwpbsp_option[0] ) ) : '' ) );
+      
+      $schedule = isset( $fwpbsp_option[0] ) ? date( 'Y-m-d H:i:s', strtotime( $fwpbsp_option[0] ) ) : '';
+      if( ! empty( $schedule ) ) {
+        bp_activity_update_meta( $activity_id, 'fwpbsp_meta', [
+          'scheduled_on'              => $schedule,
+          'timezone'                  => isset( $_POST[ 'timezone' ] ) ? $_POST[ 'timezone' ] : '',
+          'updatedon'                 => date( 'Y-m-d H:i:s' ),
+          'expiry'                    => false
+        ] );
+        bp_activity_update_meta( $activity_id, 'fwpbsp_meta_schedule', apply_filters( 'futurewordpress/project/filter/server/time', $schedule, [
+          'timezone'                  => isset( $_POST[ 'timezone' ] ) ? $_POST[ 'timezone' ] : ''
+        ] ) );
+      }
 
       if( isset( $fwpbsp_option[0] ) && ! empty( $fwpbsp_option[0] ) ) {
         if( ! $this->isAvailble( $activity_id ) && $this->setStatus( $activity_id, 1 ) ) {
@@ -141,7 +154,7 @@ class Hooks {
     
 		$fwpbsp_closing = false;
 		// if ( isset( $activity_meta['expiry'] ) && $activity_meta['expiry'] != 0 ) {
-		// 	$current_time    = new DateTime( date( 'Y-m-d H:i:s a', current_time( 'timestamp', 0 ) ) );
+		// 	$current_time    = new DateTime( date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ) );
 		// 	$close_date      = $activity_meta['expiry'];
 		// 	$close_date_time = new DateTime( $close_date );
 		// 	if ( $close_date_time > $current_time ) {
@@ -157,21 +170,21 @@ class Hooks {
     //   }
     // }
     // if( $fwpbsp_closing ) {
-    //   return sprintf( __( 'This post will be removed on %s.', 'domain' ), date( 'Y-m-d h:i', strtotime( $fwpbsp_meta_schedule ) ) );
+    //   return sprintf( __( 'This post will be removed on %s.', 'fwp-bsp' ), date( 'Y-m-d h:i', strtotime( $fwpbsp_meta_schedule ) ) );
     // } else {
     //   return json_encode( [
     //     $fwpbsp_meta_schedule, $activity_id, // $this->isAvailble( $activity_id )
     //   ] );
     // }
     return ( ! $this->isAvailble( $activity_id ) ) ? '
-    <div class="fwp-bsf-post-schedule-timer" data-timing="' . esc_attr( date( 'M d, Y h:i:s', strtotime( $fwpbsp_meta_schedule ) ) ) . '" data-nothing="' . esc_attr( __( '00', 'domain' ) ) . '">
-      <div class="fwp-bsf-schedule-wrap">
-        <div class="fwp-bsf-single fwp-bsf-day" data-title="' . esc_attr__( 'Days', 'domain' ) . '"></div>
-        <div class="fwp-bsf-single fwp-bsf-hour" data-title="' . esc_attr__( 'Hours', 'domain' ) . '"></div>
-        <div class="fwp-bsf-single fwp-bsf-minute" data-title="' . esc_attr__( 'Minutes', 'domain' ) . '"></div>
-        <div class="fwp-bsf-single fwp-bsf-second" data-title="' . esc_attr__( 'Seconds', 'domain' ) . '"></div>
-      </div>
-    </div>' : esc_attr( date( 'M d, Y h:i:s', strtotime( $fwpbsp_meta_schedule ) ) );
+      <div class="fwp-bsf-post-schedule-timer" data-timing="' . esc_attr( date( 'M d, Y h:i:s', strtotime( $fwpbsp_meta_schedule ) ) ) . '" data-nothing="' . esc_attr( __( '00', 'fwp-bsp' ) ) . '">
+        <div class="fwp-bsf-schedule-wrap">
+          <div class="fwp-bsf-single fwp-bsf-day" data-title="' . esc_attr__( 'Days', 'fwp-bsp' ) . '"></div>
+          <div class="fwp-bsf-single fwp-bsf-hour" data-title="' . esc_attr__( 'Hours', 'fwp-bsp' ) . '"></div>
+          <div class="fwp-bsf-single fwp-bsf-minute" data-title="' . esc_attr__( 'Minutes', 'fwp-bsp' ) . '"></div>
+          <div class="fwp-bsf-single fwp-bsf-second" data-title="' . esc_attr__( 'Seconds', 'fwp-bsp' ) . '"></div>
+        </div>
+      </div>' : ''; // esc_attr( date( 'M d, Y h:i:s', strtotime( $fwpbsp_meta_schedule ) ) );
   }
 
   private function setStatus( $id = false, $status = 0 ) {
@@ -198,7 +211,7 @@ class Hooks {
       return true;
     } else {
       $status = true;
-      // $current_time    = new DateTime( date( 'Y-m-d H:i:s a', current_time( 'timestamp', 0 ) ) );
+      // $current_time    = new DateTime( date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) ) );
       // $close_date      = $fwpbsp_meta_schedule;
       // $to_post_time = new DateTime( $close_date );
       
@@ -210,8 +223,8 @@ class Hooks {
     }
   }
   public function hookStatus() {
-    global $wpdb;
-    $results = $wpdb->get_results( "SELECT act_m.activity_id FROM {$wpdb->prefix}bp_activity act LEFT JOIN {$wpdb->prefix}bp_activity_meta act_m ON act.id = act_m.activity_id WHERE act_m.meta_key = 'fwpbsp_meta_schedule' AND act_m.meta_value != '' AND act.hide_sitewide = 1 AND NOW() >= date(act_m.meta_value);" );
+    global $wpdb; // NOW()
+    $results = $wpdb->get_results( $wpdb->prepare( "SELECT act_m.activity_id FROM {$wpdb->prefix}bp_activity act LEFT JOIN {$wpdb->prefix}bp_activity_meta act_m ON act.id = act_m.activity_id WHERE act_m.meta_key = 'fwpbsp_meta_schedule' AND act_m.meta_value != '' AND act.hide_sitewide = 1 AND %s >= act_m.meta_value;", date( 'Y-m-d H:i:s' ) ) );
     if( $results && count( $results ) >= 1 ) {
       foreach( $results as $i => $row ) {
         if( $this->isAvailble( $row->activity_id ) && $this->setStatus( $row->activity_id, 0 ) ) {
@@ -263,7 +276,7 @@ class Hooks {
         '{id}', '{datetime}'
       ], [
         $activity_id, wp_date( get_fwp_option( 'fwp_bsp_notifydate-formate', 'M d, Y H:i A' ), strtotime( $fwpbsp_meta_schedule ) )
-      ], __( get_fwp_option( 'fwp_bsp_notifypublish-text', 'Activity id {id} has been published on {datetime}.' ), 'domain' ) );
+      ], __( get_fwp_option( 'fwp_bsp_notifypublish-text', 'Activity id {id} has been published on {datetime}.' ), 'fwp-bsp' ) );
       $text = $title;
       $link  = site_url( '/activity/p/' . $activity_id . '/' );
       // $custom_text = bp_core_get_user_displayname( $secondary_item_id ) . ' liked your activity';
@@ -292,12 +305,12 @@ class Hooks {
       return $return;
     } else if( 'scheduled_activity-paused' === $action ) {
       $fwpbsp_meta_schedule = bp_activity_get_meta( $activity_id, 'fwpbsp_meta_schedule' );
-      $title = sprintf( __( 'Scheduled activity saved successfully. Will publish on %s.', 'domain' ), wp_date( 'M d, Y H:i A', strtotime( $fwpbsp_meta_schedule ) ) );
+      $title = sprintf( __( 'Scheduled activity saved successfully. Will publish on %s.', 'fwp-bsp' ), wp_date( 'M d, Y H:i A', strtotime( $fwpbsp_meta_schedule ) ) );
       $title = str_replace( [
         '{id}', '{datetime}'
       ], [
         $activity_id, wp_date( get_fwp_option( 'fwp_bsp_notifydate-formate', 'M d, Y H:i A' ), strtotime( $fwpbsp_meta_schedule ) )
-      ], __( get_fwp_option( 'fwp_bsp_notifypaused-text', 'Scheduled activity ({id}) saved successfully. Will publish on {datetime}.' ), 'domain' ) );
+      ], __( get_fwp_option( 'fwp_bsp_notifypaused-text', 'Scheduled activity ({id}) saved successfully. Will publish on {datetime}.' ), 'fwp-bsp' ) );
       $text = $title;
       $link = site_url( '/activity/p/' . $activity_id . '/' );
       if ( 'string' === $format ) {

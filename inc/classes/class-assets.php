@@ -28,7 +28,7 @@ class Assets {
 		// wp_register_style( 'bootstrap-css', FUTUREWORDPRESS_PROJECT_BUILD_LIB_URI . '/css/bootstrap.min.css', [], false, 'all' );
 		// wp_register_style( 'slick-css', FUTUREWORDPRESS_PROJECT_BUILD_LIB_URI . '/css/slick.css', [], false, 'all' );
 		// wp_register_style( 'slick-theme-css', FUTUREWORDPRESS_PROJECT_BUILD_LIB_URI . '/css/slick-theme.css', ['slick-css'], false, 'all' );
-		wp_register_style( 'fwp-bsp-frontend', FUTUREWORDPRESS_PROJECT_BUILD_CSS_URI . '/frontend.css', ['bootstrap-css'], $this->filemtime( FUTUREWORDPRESS_PROJECT_BUILD_CSS_DIR_PATH . '/frontend.css' ), 'all' );
+		wp_register_style( 'fwp-bsp-frontend', FUTUREWORDPRESS_PROJECT_BUILD_CSS_URI . '/frontend.css', [], $this->filemtime( FUTUREWORDPRESS_PROJECT_BUILD_CSS_DIR_PATH . '/frontend.css' ), 'all' );
 		// wp_register_style( 'frontend-base', FUTUREWORDPRESS_PROJECT_BUILD_LIB_URI . '/css/frontend-base.css', ['bootstrap-css'], $this->filemtime( FUTUREWORDPRESS_PROJECT_BUILD_LIB_PATH . '/css/frontend-base.css' ), 'all' );
 		// wp_register_style( 'select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css', [], false, 'all' );
 		// wp_register_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css', [], false, 'all' );
@@ -56,7 +56,7 @@ class Assets {
 		// wp_register_script( 'bootstrap-js', FUTUREWORDPRESS_PROJECT_BUILD_LIB_URI . '/js/bootstrap.min.js', ['jquery'], false, true );
 		// wp_register_script( 'tailwindcss', 'https://cdn.tailwindcss.com', [], false, true );
 		// wp_register_script( 'select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js', [], false, true );
-		// wp_register_script( 'ckeditor', 'https://cdn.ckeditor.com/ckeditor5/35.2.1/classic/ckeditor.js', [], false, true );
+		// wp_register_script( 'ckeditor', 'https://cdn.ckeditor.com/ckeditor5/35.3.2/classic/ckeditor.js', [], false, true );
 		// wp_register_script( 'data-table', 'https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js', [ 'jquery' ], false, true );
 
 		
@@ -80,6 +80,10 @@ class Assets {
 		// if ( is_author() ) {
 		// 	wp_enqueue_script( 'author-js' );
 		// }
+		// When an query Arguments detected
+		// if ( isset( $_GET[ 'create-activity' ] ) ) {
+		// 	wp_enqueue_script( 'ckeditor' );
+		// }
 
 		// get_fwp_option( 'candidate_cv_delete_confirm_txt', 'Are you sure you want to delete Your CV? This can\'t be undo.' ),
 		wp_localize_script( 'fwp-bsp-frontend', 'siteConfig', [
@@ -88,9 +92,9 @@ class Assets {
       'iScheduled'				=> is_FwpActive( 'fwp_bsp_enabled' ),
       'defaulTime'				=> get_fwp_option( 'fwp_bsp_defaultime', '12:00:00 AM' ),
       'hideSubmit'				=> is_FwpActive( 'fwp_bsp_hidepostnow' ),
-      'confirmDelete'			=> __( 'Are you sure you want ot delete this activity post? Please click cancel to dismiss this request.', 'domain' ),
+      'confirmDelete'			=> __( 'Are you sure you want ot delete this activity post? Please click cancel to dismiss this request.', 'fwp-bsp' ),
 			'onDragConfirm'			=> is_FwpActive( 'fwp_bsp_ondragconfirm' ),
-			'confirmSwitch'			=> __( 'Are you sure about this change? Click on Cancel to dismiss.', 'domain' )
+			'confirmSwitch'			=> __( 'Are you sure about this change? Click on Cancel to dismiss.', 'fwp-bsp' )
 		] );
 	}
 	public function register_admin_styles() {

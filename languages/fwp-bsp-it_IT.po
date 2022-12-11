@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Block Effects\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-08 11:12+0000\n"
+"PO-Revision-Date: 2022-12-08 11:27+0000\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
+"Language: it_IT\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.3; wp-6.1.1\n"
+"X-Domain: fwp-gbe"
+
+#. Description of the plugin
+msgid ""
+"A simple and lightweight plugin for Block Effects on WordPress Gutenberg."
+msgstr ""
+"Un plug-in semplice e leggero per Block Effects su WordPress Gutenberg."
+
+#: inc/classes/class-dashboard.php:415
+msgid "Activity failed to validate."
+msgstr "Impossibile convalidare l'attività."
+
+#: inc/classes/class-dashboard.php:415
+msgid "Activity not found."
+msgstr "Attività non trovata."
+
+#: inc/classes/class-menus.php:68
+msgid "Animation Distance"
+msgstr "Distanza di animazione"
+
+#: inc/classes/class-menus.php:61
+msgid "Animation Duration"
+msgstr "Durata dell'animazione"
+
+#: inc/classes/class-menus.php:62
+msgid "Animation Effect duration. Better to let it less then 1.5 second."
+msgstr ""
+"Durata dell'effetto di animazione. Meglio lasciarlo meno di 1,5 secondi."
+
+#: inc/classes/class-requests.php:25
+msgid "Authetication error"
+msgstr "Errore di autenticazione"
+
+#: inc/classes/class-option.php:53
+msgid "Block Effect"
+msgstr "Effetto blocco"
+
+#. Name of the plugin
+msgid "Block Effects"
+msgstr "Effetti di blocco"
+
+#: inc/classes/class-menus.php:75
+msgid "CSS Selectors"
+msgstr "Selettori CSS"
+
+#: inc/classes/class-menus.php:48
+msgid "Default Animation"
+msgstr "Animazione predefinita"
+
+#: inc/classes/class-dashboard.php:344
+msgid "Delete"
+msgstr "Elimina"
+
+#: inc/classes/class-menus.php:69
+msgid "Distence from where element should be animated. In pixel formate."
+msgstr "Distanza da dove l'elemento deve essere animato. In formato pixel."
+
+#: inc/classes/class-menus.php:34
+msgid "Enable Effect"
+msgstr "Abilita effetto"
+
+#: inc/classes/class-menus.php:49
+msgid ""
+"Enable timer on scheduled posts. This will show a countdown timer after post "
+"content with Days, Hour, Minutes and Seconds parameter."
+msgstr ""
+"Abilita il timer sui post programmati. Questo mostrerà un conto alla "
+"rovescia dopo il contenuto del post con il parametro Giorni, Ora, Minuti e "
+"Secondi."
+
+#: inc/classes/class-dashboard.php:412
+msgid "Error detected while processing."
+msgstr "Errore rilevato durante l'elaborazione."
+
+#: inc/classes/class-menus.php:54
+msgid "Fade Bottom"
+msgstr "Dissolvenza in basso"
+
+#: inc/classes/class-menus.php:53
+msgid "Fade In"
+msgstr "Dissolvenza in entrata"
+
+#: inc/classes/class-menus.php:55
+msgid "Fade Left"
+msgstr "Dissolvenza a sinistra"
+
+#: inc/classes/class-menus.php:56
+msgid "Fade Right"
+msgstr "Dissolvenza a destra"
+
+#: inc/classes/class-dashboard.php:418
+msgid "Form validation error."
+msgstr "Errore di convalida del modulo."
+
+#. Author of the plugin
+msgid "Future Wordpress"
+msgstr "Futuro WordPress"
+
+#: inc/classes/class-hooks.php:30
+msgid "GBE Classes"
+msgstr "Classi GBE"
+
+#: inc/classes/class-menus.php:29
+msgid "General"
+msgstr "Generale"
+
+#: inc/classes/class-option.php:53
+msgid "Gutenberg Block Effect Setup Page."
+msgstr "Pagina di configurazione dell'effetto blocco Gutenberg."
+
+#: inc/classes/class-hooks.php:24
+msgid "Gutenburg Block Effect"
+msgstr "Effetto blocco Gutenberg"
+
+#: inc/classes/class-menus.php:76
+msgid ""
+"Here you've to suggest those widgets classes to apply block effect. Every "
+"single selectors should be seperated with comma."
+msgstr ""
+"Qui devi suggerire quelle classi di widget per applicare l'effetto di blocco."
+" Ogni singolo selettore deve essere separato con una virgola."
+
+#. Author URI of the plugin
+msgid "https://futurewordpress.com/"
+msgstr "https://futurewordpress.com/"
+
+#. URI of the plugin
+msgid "https://github.com/mahmudremal/gutenburg-block-effects/"
+msgstr "https://github.com/mahmudremal/gutenburg-block-effects/"
+
+#: inc/classes/class-dashboard.php:310 inc/classes/class-dashboard.php:358
+#: inc/classes/class-dashboard.php:376 inc/classes/class-dashboard.php:426
+msgid "Illigal request detected."
+msgstr "Richiesta illegale rilevata."
+
+#: inc/classes/class-dashboard.php:263
+msgid ""
+"Keep your content organized, schedule your posts, add your own content, "
+"engage your followers, get noticed by brands for collaborations, and manage "
+"your media content on the go."
+msgstr ""
+"Mantieni i tuoi contenuti organizzati, programma i tuoi post, aggiungi i "
+"tuoi contenuti, coinvolgi i tuoi follower, fatti notare dai brand per le "
+"collaborazioni e gestisci i tuoi contenuti multimediali ovunque ti trovi."
+
+#: inc/classes/class-menus.php:35
+msgid "Mark to enable Block Effect globally."
+msgstr "Contrassegna per abilitare Block Effect a livello globale."
+
+#: inc/classes/class-dashboard.php:265
+msgid "New Schedule"
+msgstr "Nuovo programma"
+
+#: inc/classes/class-dashboard.php:418
+msgid "Problem detected in your request. Please fillup all things first."
+msgstr ""
+"Problema rilevato nella tua richiesta. Per favore riempi prima tutte le cose."
+
+#: inc/classes/class-dashboard.php:343
+msgid "Quick Edit"
+msgstr "Modifica rapida"
+
+#: inc/classes/class-dashboard.php:445
+msgid "Request not valid or incomplete."
+msgstr "Richiesta non valida o incompleta."
+
+#: inc/classes/class-dashboard.php:105 inc/classes/class-dashboard.php:223
+#: inc/classes/class-dashboard.php:258
+msgid "Schedule & Post"
+msgstr "Programma e posta"
+
+#: inc/classes/class-dashboard.php:264
+msgid ""
+"Schedule your new post, edit the existing ones and move posts between dates "
+"simply, with drag & drop."
+msgstr ""
+"Pianifica il tuo nuovo post, modifica quelli esistenti e sposta i post tra "
+"le date semplicemente, con il drag & drop."
+
+#: inc/classes/class-dashboard.php:87
+msgid "Scheduled"
+msgstr "Programmata"
+
+#: inc/classes/class-dashboard.php:438
+#, php-format
+msgid "Scheduled successfully changed to %s."
+msgstr "Programmato modificato con successo in %s."
+
+#: inc/classes/class-menus.php:30
+msgid ""
+"Setup your Gutenberg Block effects and all of it's customization is here."
+msgstr ""
+"Imposta i tuoi effetti Gutenberg Block e tutta la sua personalizzazione è "
+"qui."
+
+#: inc/classes/class-dashboard.php:412 inc/classes/class-dashboard.php:441
+msgid ""
+"Something happens while tring to validate this activity and updating it."
+msgstr ""
+"Succede qualcosa durante il tentativo di convalidare questa attività e di "
+"aggiornarla."
+
+#: inc/classes/class-dashboard.php:182
+msgid "Sorry, there was no Schedule & Post."
+msgstr "Siamo spiacenti, non c'era Schedule & Post."
+
+#: inc/classes/class-requests.php:25
+msgid "Sorry, your nonce did not verify."
+msgstr "Spiacenti, il tuo nonce non è stato verificato."
+
+#: inc/classes/class-dashboard.php:362
+msgid "Specific activity not detected."
+msgstr "Attività specifica non rilevata."
+
+#: inc/classes/class-dashboard.php:367
+msgid "Successfully deleted this activity."
+msgstr "Eliminazione di questa attività riuscita."
+
+#: inc/classes/class-hooks.php:32
+msgid "Those elements classes, should be effected"
+msgstr "Quelle classi di elementi, dovrebbero essere effettuate"
+
+#: inc/classes/class-dashboard.php:345
+msgid "View"
+msgstr "Visualizzazione"

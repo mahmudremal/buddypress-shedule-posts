@@ -16,7 +16,9 @@
 			this.onDragConfirm = siteConfig?.onDragConfirm ?? false;
 			this.confirmDelete = siteConfig?.confirmDelete ?? 'Click okay to make sure you want to delete it.';
 			this.confirmSwitch = siteConfig?.confirmSwitch ?? "Are you sure about this change?\nClick on Cancel to dismiss.";
-			this.calendar = null;
+			this.calendar = null;this.editor = false;
+			this.standardForm = false;
+			this.fixedPopup = false;
       
 			this.init();
 		}
@@ -30,12 +32,16 @@
 						thisClass.hideSubmitBtn();
 					}
 					thisClass.startCountDown();
+					thisClass.editBtnHighlight();
 					thisClass.removeRandomUploader();
 					thisClass.activityDelete();
 					thisClass.managePopup();
+					thisClass.iframeModel();
+					// thisClass.activityOnly();
 				}, 1000 );
 				thisClass.ajaxLoad();
 				thisClass.fixCustomTabIssue();
+				( ! thisClass.standardForm ) || thisClass.fetchActivityForm();
 			}
     }
 		scheduleButton() {
@@ -64,6 +70,11 @@
 					} );
 					// clearInterval( thisClass.interVal );
 				}
+			}
+			node = document.querySelector( '.fwp-bsp .fwp-bsp-schedule-field #fwp-bsp-scheduled-timezone:not(.has_handled)' );
+			if( node ) {
+				node.value = ( Intl ) ? Intl.DateTimeFormat().resolvedOptions().timeZone : '';
+				node.classList.add( 'has_handled' );
 			}
 		}
 		hideSubmitBtn() {
@@ -131,6 +142,7 @@
 					thisClass.calendar = new FullCalendar.Calendar(calendarEl, {
 						initialView: 'dayGridMonth',
 						initialDate: new Date,
+						eventLimit: true,
 						headerToolbar: {
 							left: 'prev,next today',
 							center: 'title',
@@ -173,7 +185,9 @@
 						editable: true,
 						eventDrop: function( info ) {
 							thisClass.eventDrop( info );
-						}
+						},
+						// eventRender: function( info ) {
+						// }
 					} );
 					thisClass.calendar.render();
 					// thisClass.dateClick();
@@ -263,43 +277,62 @@
 		}
 		managePopup() {
 			const thisClass = this;var popup;popup = document.getElementById( 'fwp-sheduled-activity-edit-form' );
-			document.querySelectorAll( '.fwp-bsp-quickedit:not([data-handled])' ).forEach( function( e, i ) {
-				e.dataset.handled = true;
-				e.addEventListener( 'click', function( event ) {
-					event.preventDefault();
-					if( popup ) {
-						thisClass.openPopup( popup, e, this );
-					}
-				} );
-			} );
+			// document.querySelectorAll( '.fwp-bsp-quickedit:not([data-handled])' ).forEach( function( e, i ) {
+			// 	e.dataset.handled = true;
+			// 	e.addEventListener( 'click', function( event ) {
+			// 		event.preventDefault();
+			// 		if( popup ) {
+			// 			thisClass.openPopup( popup, e, this );
+			// 		}
+			// 	} );
+			// } );
 			thisClass.fixPopup( popup );
 		}
-		openPopup( popup, e, that ) {
-			const thisClass = this;
+		openPopup( popup, e, that, tab = false ) {
+			const thisClass = this;var id, wrap;
 			popup.classList.add( 'reign-window-popup-open' );
 			document.body.classList.add( 'modal-active' );
-			if( e.dataset.content && e.dataset.content != '' ) {
-				document.getElementById( 'fwp-bsp-activity-content' ).innerHTML = e.dataset.content;
-			}
-			if( e.dataset.schedule && e.dataset.schedule != '' ) {
-				document.getElementById( 'fwp-bsp-activity-schedule' ).value = e.dataset.schedule;
-			}
-			if( e.dataset.activity && e.dataset.activity != '' ) {
-				document.getElementById( 'fwp-bsp-activity-id' ).value = e.dataset.activity;
-			}
+			if( thisClass.standardForm && tab ) {
+				wrap = '.fwp-bsp-schedule-field .fwp-bsp-schedule-wrap .fwp-bsp-schedule';
+				if( typeof e.dataset !== undefined && e.dataset.content != '' ) {
+					document.getElementById( 'whats-new' ).innerHTML = e.dataset.content;
+				}
+				if( typeof e.dataset !== undefined && e.dataset.schedule != '' ) {
+					document.querySelector( wrap + ' input.ac-input' ).value = e.dataset.schedule;
+				}
+				if( typeof e.dataset !== undefined && e.dataset.activity != '' ) {
+					id = document.createElement( 'input' );
+					id.value = e.dataset.activity;
+					id.id = 'fwp-bsp-activity-id-onwrap';
+					id.type = 'hidden';id.name = 'fwp-bsp-scheduled-id';
+					document.querySelector( wrap ).appendChild( id );
+				}
+			} else if( tab ) {
+				// if( e.dataset.content && e.dataset.content != '' ) {
+				// 	// document.getElementById( 'fwp-bsp-activity-content' ).innerHTML = e.dataset.content;
+				// }
+				
+			} else {}
 		}
 		closePopup( popup ) {
-			const thisClass = this;
+			const thisClass = this;var elem;
 			popup.classList.remove( 'reign-window-popup-open' );
 			document.body.classList.remove( 'modal-active' );
-			document.getElementById( 'fwp-bsp-activity-content' ).innerHTML = '';
-			document.getElementById( 'fwp-bsp-activity-schedule' ).value = '';
+			// document.getElementById( 'fwp-bsp-activity-content' ).innerHTML = '';
+			elem = document.getElementById( 'fwp-bsp-activity-schedule' );
+			if( elem ) {elem.value = '';}
+			elem = document.getElementById( 'fwp-bsp-activity-id-onwrap' );
+			if( elem ) {elem.remove();}
 		}
 		fixPopup( popup ) {
 			const thisClass = this;var dom;
-			dom = document.querySelector( '#fwp-sheduled-activity-edit-form' );
-			if( dom ) {
-				dom.addEventListener( 'click', function( event ) {
+			if( thisClass.fixedPopup ) {return;}
+			thisClass.fixedPopup = true;
+			// if( ! popup ) {
+				popup = document.getElementById( 'fwp-sheduled-activity-edit-form' );
+			// }
+			if( popup ) {
+				popup.addEventListener( 'click', function( event ) {
 					thisClass.closePopup( popup );
 				} );
 			}
@@ -323,11 +356,15 @@
 			}
 		}
 		eventDrop( info ) {
-			const thisClass = this;
+			const thisClass = this;var edit;
 			// alert( info.event.title + " was dropped on " + info.event.start.toISOString() );
 			// alert( info.event.id + " was dropped on " + info.event.start.toISOString() );
 			// console.log( info.event.id, info.event.start );
+			// console.log( info.event );
 			if( ! thisClass.onDragConfirm || confirm( thisClass.confirmSwitch ) ) {
+				var d = new Date( info.event.start ),
+						date = d.toISOString(); // ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+				date = d.toISOString().slice(0,10) + ' ' + d.toLocaleTimeString();
 				$.ajax( {
 					url: thisClass.ajaxUrl,
 					type: 'POST',
@@ -335,24 +372,123 @@
 					data: {
 						action: 'fwp-bsp-activity-switch-schedule',
 						nonce: thisClass.ajaxNonce,
-						schedule: info.event.start.toISOString(),
-						activity: info.event.id
+						schedule: date, // info.event.start.toDateString(),
+						activity: info.event.id,
+						timezone: ( Intl ) ? Intl.DateTimeFormat().resolvedOptions().timeZone : ''
 					},
 					success: function( json ) {
 						var events = [];
 						if( json.success ) {
-							console.log( json.data );
+							// console.log( json.data );
+							edit = document.querySelector( '.fwp-bsp-quickedit[data-activity="' + info.event.id + '"]' );
+							if( edit && json.data.date && json.data.date != '' ) {
+								edit.dataset.schedule = json.data.date;
+							} else {
+								console.log( 'Couldn\'t changed edit date' );
+							}
 						} else {
 							info.revert();
 						}
 					},
 					error: function( e ) {
-						console.log( e );
+						// e.responseText | e.statusText | e.statusCode | e.status | e.readyState
+						console.log( e.responseText );
 						info.revert();
 					}
 				} );
 			} else {
 				info.revert();
+			}
+		}
+
+		fetchActivityForm() {
+			const thisClass = this;var node = document.querySelector( '.registration-login-form .content' );
+			// } else {console.log( node, 'not found' );
+			if( node ) {
+				node.id = 'bp-nouveau-activity-form';node.classList.add( 'activity-update-form' );
+				// if( node.parentNode ) {
+				// 	node.parentNode.classList.add( 'activity-update-form' );
+				// }
+			}
+			node = node.querySelector( '#whats-new-form' );
+			if( node ) {
+				node.classList.add( 'activity-form', 'activity-form-expanded' );
+			}
+		}
+
+		activityOnly() {
+			const thisClass = this;var node, div, elem, span, a, i;
+			node = document.querySelector( '.fwp-bsp.fwp-bsp-activity-only' );
+			if( thisClass.editor !== false ) {return;}
+			if( node ) {
+				elem = document.querySelector( '.fwp-bsp.fwp-bsp-activity-only #buddypress #bp-nouveau-activity-form #whats-new' );
+				if( elem ) {
+					// elem.click();
+					ClassicEditor.create( elem ).then( editor => {
+						thisClass.editor = editor;
+						console.log( editor );
+					} ).catch( error => {
+						console.error( error );
+					} );
+				}
+			}
+		}
+		editBtnHighlight() {
+			document.querySelectorAll( '.fwp-bsp.fwp-bsp-activity-edit .activity-content .activity-meta .buddyboss_edit_activity:not(.is_highlighted_fwp)' ).forEach( function( e, i ) {
+				e.classList.add( 'is_highlighted_fwp' );
+				e.addEventListener( 'click', function( event ) {
+						this.classList.add( 'is_clicked' );
+				} );
+			} );
+		}
+		iframeModel() {
+			const thisClass = this;var node, iframe, model, popup, popupTab;
+			document.querySelectorAll( '.fwp-bsp-open-popup:not(.is_handled)' ).forEach( function( e, i ) {
+				// console.log( e, i );
+				e.classList.add( 'is_handled' );
+				e.addEventListener( 'click', function( event ) {
+					event.preventDefault();
+					popup = this.dataset.popup;
+					popupTab = this.dataset.popupTab;
+					model = document.getElementById( popup );
+					if( true ) {
+						document.querySelector( '.fwp-bsp .registration-login-form .content.is_active' ).classList.remove( 'is_active' );
+						node = document.querySelector( '.fwp-bsp .registration-login-form .content[data-tab="' + popupTab + '"]' );
+						if( node ) {
+							node.classList.add( 'is_active' );
+							if( popupTab == 'edit' ) {iframe = node.querySelector( 'iframe' );iframe.src = ( this.href ? this.href : ( event.href ? event.href : event.getAttribute( 'href' ) ) ) + '&is_iframe=true';}
+							if( model ) {thisClass.openPopup( model, event, this, ( popupTab == 'schedule' ) );}
+						}
+					}
+					switch ( popupTab ) {
+						case 'create':
+						case 'edit':
+							thisClass.modelWidely( model, true );
+							break;
+						case 'schedule':
+							if( typeof this.dataset !== undefined && this.dataset.schedule != '' ) {
+								document.getElementById( 'fwp-bsp-activity-schedule' ).value = this.dataset.schedule;
+							}
+							if( typeof this.dataset !== undefined && this.dataset.activity != '' ) {
+								document.getElementById( 'fwp-bsp-activity-id' ).value = this.dataset.activity;
+							}
+							node = document.getElementById( 'fwp-bsp-activity-timezone' );
+							if( node && Intl ) {node.value = Intl.DateTimeFormat().resolvedOptions().timeZone;}
+							thisClass.modelWidely( model, false );
+							break;
+						default:
+							break;
+					}
+				} );
+			} );
+		}
+		modelWidely( model, is_wide ) {
+			model = document.querySelector( '.fwp-bsp #fwp-sheduled-activity-edit-form .fwp-sheduled-activity-edit-form' );
+			// if( ! model ) {return;}
+			if( is_wide ) {
+				model.classList.add( 'widly' );
+			} else {
+				model.classList.remove( 'widly' );
 			}
 		}
 	}
